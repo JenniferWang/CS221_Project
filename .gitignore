@@ -12,3 +12,7 @@ build/
 doc/*.txt
 # ignore all .txt files in the doc/ directory
 doc/**/*.txt
+*.pdf
+*.json
+*.ipynb
+
