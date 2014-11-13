@@ -67,8 +67,8 @@ class DictionaryTagger(object):
 					self.dictionary[key] = curr_dict[key]
 					self.max_key_size = max(self.max_key_size, len(key))
 
-	def tag(self, postagged_sentences):
-		return [self.tag_sentence(sentence) for sentence in postagged_sentences]
+	def tag(self, splitted_sentences):
+		return [self.tag_sentence(sentence) for sentence in splitted_sentences]
 
 	def tag_sentence(self, splitted_sentence):
 		"""
@@ -104,9 +104,24 @@ class DictionaryTagger(object):
 					j = j - 1
 
 			if not tagged:
-				tag_sentence.append(splitted_sentence[i])
+				tag_sentence.append((splitted_sentence[i],))
 				i += 1
 		return tag_sentence
+
+
+def sentence_score(tagged_sentences, labels):
+	score = {}
+	for label in labels:
+		score[label] = 0
+
+	for sentence in tagged_sentences:
+		for word in sentence:
+			if len(word) > 1:
+				word_labels = word[1]
+				for label in word_labels:
+					score[label] += 1
+
+	return score
 
 
 if __name__ == '__main__':
@@ -118,3 +133,4 @@ if __name__ == '__main__':
 	dicttagger = DictionaryTagger([ 'dicts/positive.yml', 'dicts/negative.yml'])
 	dict_tagged_sentences = dicttagger.tag(splitted_sentences)
 	pprint(dict_tagged_sentences)
+	print sentence_score(dict_tagged_sentences, ['negative', 'positive'])
