@@ -56,11 +56,14 @@ class DictionaryTagger(object):
 	def __init__(self, dictionary_paths):
 		files = [open(path, 'r') for path in dictionary_paths]
 		dictionaries = [yaml.load(dict_file) for dict_file in files]
+		print dictionaries
 		map(lambda x: x.close(), files)
 		self.dictionary = {}
 		self.max_key_size = 0
 		for curr_dict in dictionaries:
 			for key in curr_dict:
+				if type(key) is bool: # This is a very strange bug, haven't figured out why
+					continue
 				if key in self.dictionary:
 					self.dictionary[key].extend(curr_dict[key])
 				else:
@@ -110,6 +113,9 @@ class DictionaryTagger(object):
 
 
 def sentence_score(tagged_sentences, labels):
+	"""
+	Given a review(with multiple tagged sentences), count the number of each label
+	"""
 	score = {}
 	for label in labels:
 		score[label] = 0
@@ -130,7 +136,8 @@ if __name__ == '__main__':
 	text = """What can I say about this place. The staff of the restaurant is nice and the eggplant is not bad. Apart from that, very uninspired food, lack of atmosphere and too expensive. I am a staunch vegetarian and was sorely dissapointed with the veggie options on the menu. Will be the last time I visit, I recommend others to avoid."""
 	splitted_sentences =  splitter.split(text)
 
-	dicttagger = DictionaryTagger([ 'dicts/positive.yml', 'dicts/negative.yml'])
+	#dicttagger = DictionaryTagger([ 'dicts/positive.yml', 'dicts/negative.yml'])
+	dicttagger = DictionaryTagger(['dicts/subjective.yml'])
 	dict_tagged_sentences = dicttagger.tag(splitted_sentences)
-	pprint(dict_tagged_sentences)
-	print sentence_score(dict_tagged_sentences, ['negative', 'positive'])
+	#pprint(dict_tagged_sentences)
+	#print sentence_score(dict_tagged_sentences, ['negative', 'positive'])

@@ -10,14 +10,28 @@ movie_reviews_data_folder = sys.argv[1]
 dataset = load_files(movie_reviews_data_folder, shuffle=False)
 
 reviewList = dataset['data']
-splited_reviewList = []
+splitted_reviewList = []
+dict_tagged_reviewList = []
+score_reviewList = []
+
+
 splitter = Splitter()
+dicttagger = DictionaryTagger(['dicts/subjective.yml'])
+labels = ['weaksubj', 'strongsubj']
 
 # split each sentence into word list
 workload = 5
 # workload = len(reviewList)
 for i in xrange(workload):
-	splited_reviewList.append(splitter.split(reviewList[i]))
+	splitted_reviewList.append(splitter.split(reviewList[i]))
+	dict_tagged_reviewList.append(dicttagger.tag(splitted_reviewList[i]))
+	score_reviewList.append(sentence_score(dict_tagged_reviewList[i], labels))
+
+pprint(score_reviewList)
+
+
+# create tag dictionary
+
 
 
 #splitedText = testSplitter.split(text)
